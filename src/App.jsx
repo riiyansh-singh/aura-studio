@@ -15,7 +15,7 @@ const callClaude = async (messages, system, maxTokens = 1000) => {
       "anthropic-version": "2023-06-01",
       "anthropic-dangerous-direct-browser-access": "true",
     },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: maxTokens, system, messages }),
+    body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: maxTokens, system, messages }),
   });
   const d = await res.json();
   return d.content?.map(b => b.text || "").join("") || "";
