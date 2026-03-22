@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 const GEMINI_KEY = "AIzaSyAdp-RTNKBkLKLVXoU32oUnlBjvQEZF_Nc";
-const GEMINI_API = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_API = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
 const callClaude = async (messages, system, maxTokens = 1000) => {
   try {
