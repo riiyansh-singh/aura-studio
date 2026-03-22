@@ -233,7 +233,7 @@ MIT — free to use, modify, remix, and deploy.
 
 ## 🙏 Credits
 
-- **AI Engine:** [Google Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/) — free via Google AI Studio
+- **AI Engine:** [Google Gemini 2.0 Flash](https://deepmind.google/technologies/gemini/) — free via Google AI Studio
 - **Fonts:** Google Fonts — Playfair Display & Inter
 - **Hosting:** GitHub Pages (free)
 - **Built with:** React + Vite
