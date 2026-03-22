@@ -1,30 +1,34 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-const API = "https://api.anthropic.com/v1/messages";
-const p1 = "sk-ant-api03-TFVq_UQT_0jibfx0bT4w1SSP72t0vznu"
-const p2 = "VIXvPJhXRQSIWvVmm_ROrqddckQIYwP_SNat4ogTTiM2yniBw9Bd6A-O-T7nQAA"
-const K = p1 + p2
+const GEMINI_KEY = "AIzaSyAdp-RTNKBkLKLVXoU32oUnlBjvQEZF_Nc";
+const GEMINI_API = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 
 const callClaude = async (messages, system, maxTokens = 1000) => {
   try {
-    const res = await fetch(API, {
+    const contents = messages.map(m => {
+      const role = m.role === "assistant" ? "model" : "user";
+      if (typeof m.content === "string") {
+        return { role, parts: [{ text: m.content }] };
+      }
+      const parts = m.content.map(c => {
+        if (c.type === "text") return { text: c.text };
+        if (c.type === "image") return { inline_data: { mime_type: c.source.media_type, data: c.source.data } };
+        return { text: "" };
+      });
+      return { role, parts };
+    });
+    const res = await fetch(GEMINI_API, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": K,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: maxTokens,
-        system,
-        messages
+        system_instruction: system ? { parts: [{ text: system }] } : undefined,
+        contents,
+        generationConfig: { maxOutputTokens: maxTokens, temperature: 0.9 },
       }),
     });
     const d = await res.json();
     if (d.error) return "Error: " + d.error.message;
-    return d.content?.map(b => b.text || "").join("") || "";
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
   } catch (e) {
     return "Error: " + e.message;
   }
