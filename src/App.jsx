@@ -1,24 +1,33 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-// ─── API ──────────────────────────────────────────────────────────
 const API = "https://api.anthropic.com/v1/messages";
 const p1 = "sk-ant-api03-TFVq_UQT_0jibfx0bT4w1SSP72t0vznu"
 const p2 = "VIXvPJhXRQSIWvVmm_ROrqddckQIYwP_SNat4ogTTiM2yniBw9Bd6A-O-T7nQAA"
 const K = p1 + p2
 
 const callClaude = async (messages, system, maxTokens = 1000) => {
-  const res = await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": K,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: maxTokens, system, messages }),
-  });
-  const d = await res.json();
-  return d.content?.map(b => b.text || "").join("") || "";
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": K,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: maxTokens,
+        system,
+        messages
+      }),
+    });
+    const d = await res.json();
+    if (d.error) return "Error: " + d.error.message;
+    return d.content?.map(b => b.text || "").join("") || "";
+  } catch (e) {
+    return "Error: " + e.message;
+  }
 };
 
 // ─── Tokens ───────────────────────────────────────────────────────
